@@ -7,8 +7,6 @@ export const POST: APIRoute = async ({ request, cookies, redirect }) => {
     const formData = await request.formData()
     const osis = formData.get("osis")?.toString(), password = formData.get("password")?.toString()
 
-    // TODO: handle errors with the api and display as text in form page
-
     // handling errors with osis and password input
     if (!osis || !password) return new Response("OSIS and password are required", { status: 400 })
     if (isNaN(Number(osis))) return new Response("Invalid OSIS", { status: 400 })
