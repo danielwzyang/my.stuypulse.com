@@ -13,8 +13,7 @@ if (accessToken && refreshToken) return redirect("/")
 <Layout title="Login" desc="Login to MyPulse">
     <div class="flex flex-col justify-center items-center h-[80vh] space-y-2">
         <form
-            action="/api/auth/login"
-            method="post"
+            id="form"
             class="flex flex-col gap-y-2 w-[200px]"
         >
             <input
@@ -40,13 +39,42 @@ if (accessToken && refreshToken) return redirect("/")
                 class="text-center border-2 rounded-lg"
                 type="submit"
             >
-                Login
+                Log in
             </button>
         </form>
+        <h1 id="error" class="text-sm text-[#eb3446]"></h1>
 
         <h1 class="pt-5 text-sm">Don't have an account?</h1>
         <a href="/signup" class="text-center border-2 rounded-lg w-[150px]">
             Sign up
         </a>
     </div>
+
+    <script>
+        // gets the form element
+        const form = document.getElementById("form")
+
+        form?.addEventListener("submit", async (event) => {
+            // prevent default stops the default functionality so we can handle it ourselves
+            event.preventDefault()
+            
+            const data = new FormData(form as HTMLFormElement)
+
+            const response = await fetch("/api/auth/login", {
+                method: "POST",
+                body: data,
+            })
+            
+            // if there are no errors and login is successful
+            if (response.ok) window.location.href = "/"
+            else {
+                // gets the error msg from the response
+                const text = await response.text()
+                
+                // gets the error element and sets the text
+                const error = document.getElementById("error")
+                error!.textContent = text
+            }
+        })
+    </script>
 </Layout>
