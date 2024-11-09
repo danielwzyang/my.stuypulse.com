@@ -13,8 +13,8 @@ export const POST: APIRoute = async ({ request, redirect }) => {
 
     // checks if the osis exists in the database
     const { error } = await supabase
-        .from('total_attendance')
-        .select('id_number')
+        .from("total_attendance")
+        .select("id_number")
         .eq("id_number", osis)
         .single()
     

@@ -1,0 +1,129 @@
+---
+interface Props {
+    meetings: { [date: string]: string }
+}
+
+const { meetings } = Astro.props
+---
+
+<div class="mx-auto w-fit">
+    <div class="flex space-x-3 justify-center">
+        <button id="left"><img src="/chevron-left.svg" alt="left" class="w-4"/></button>
+
+        <h1 id="title" class="text-center"></h1>
+
+        <button id="right"><img src="/chevron-right.svg" alt="right" class="w-4"/></button>
+    </div>
+
+
+    <div id="dates" class="grid grid-cols-7 text-center"></div>
+</div>
+
+<script define:vars={{meetings}}>
+    console.log(meetings)
+    let date = new Date()
+    let year = date.getFullYear()
+    let month = date.getMonth()
+
+    updateTitle()
+    generateDates()
+    setButtonClicks()
+
+    function setButtonClicks() {
+        const left = document.getElementById("left")
+        left?.addEventListener("click", (event) => {
+            moveMonth(-1)
+        })
+
+        const right = document.getElementById("right")
+        right?.addEventListener("click", (event) => {
+            moveMonth(1)
+        })
+    }
+
+    function moveMonth(change) {
+        // moves the month and changes the dates
+        month += change
+        date = new Date(year, month, new Date().getDate())
+        year = date.getFullYear()
+        month = date.getMonth()
+
+        // updates the calendar
+        updateTitle()
+        generateDates()
+    }
+
+    function updateTitle() {
+        const title = document.getElementById("title")
+        title.innerText = date.toLocaleString('default', { month: 'long' }) + " " + year
+    }
+    
+    function generateDates() {
+        const inactiveStyle = "text-[#9e9e9e] aspect-square h-[30px] leading-[30px]"
+        const activeStyle = "aspect-square h-[30px] leading-[30px]"
+        const meetingStyle = " border border-3 rounded"
+
+        const dates = document.getElementById("dates")
+        dates.innerHTML = ""
+
+        // gets the day of the week for the first day of the month
+        const firstDay = new Date(year, month, 1).getDay()
+
+        // gets the date of the last day of the last month
+        const lastMonthLastDate = new Date(year, month, 0).getDate()
+
+
+
+        // adds the last days of the last month
+        for (let i = firstDay - 1; i >= 0; i--) {
+            const dayElement = document.createElement("div")
+            dayElement.innerText = (lastMonthLastDate - i).toString()
+            dayElement.className = inactiveStyle
+            dates?.appendChild(dayElement)
+        }
+
+        // gets the date of the last day of the current month
+        const lastDate = new Date(year, month + 1, 0).getDate()
+
+        // adds the days of the current month
+        for (let i = 1; i <= lastDate; i++) {
+            const dayElement = document.createElement("div")
+            dayElement.innerText = i.toString()
+            dayElement.className = activeStyle
+
+            // checks if the day is a meeting
+            const curDate = `${year}-${(month + 1).toString().padStart(2, "0")}-${i.toString().padStart(2, "0")}`
+            const status = meetings[curDate]
+            if (status) {
+                dayElement.className += meetingStyle
+                
+                switch (status) {
+                    case "no":
+                        dayElement.className += " bg-[#e03a56]"
+                        break
+                    case "yes":
+                        dayElement.className += " bg-[#4dd67b]"
+                        break
+                    case "future":
+                        dayElement.className += " bg-[#cccccc]"
+                }
+            }
+                
+
+            dates?.appendChild(dayElement)
+        }
+
+
+
+        // gets the day of the week of the last day of the current month
+        const lastDay = new Date(year, month + 1, 0).getDay()
+
+        // adds the days of the next month
+        for (let i = lastDay + 1; i < 7; i++) {
+            const dayElement = document.createElement("div")
+            dayElement.innerText = (i - lastDay).toString()
+            dayElement.className = inactiveStyle
+            dates?.appendChild(dayElement)
+        }
+    }
+</script>

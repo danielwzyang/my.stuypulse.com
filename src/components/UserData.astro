@@ -1,0 +1,32 @@
+---
+interface Props {
+    userData: {
+        id_number: string
+        num_checkins: number
+        attendance_rate_percent: string
+        num_checkouts: number
+        checkout_rate_percent: string
+        total_hours: number
+        average_hours: number
+    }
+}
+
+const { userData } = Astro.props
+---
+
+<div class="mx-auto w-fit space-y-3">
+    {
+        userData ? (
+            <div class="text-center ">
+                <h1>Number of Checkins: {userData.num_checkins}</h1>
+                <h1>Attendance Rate: {userData.attendance_rate_percent}</h1>
+                <h1>Number of Checkouts: {userData.num_checkouts}</h1>
+                <h1>Checkout Rate: {userData.checkout_rate_percent}</h1>
+                <h1>Total Hours: {userData.total_hours}</h1>
+                <h1>Average Hours: {userData.average_hours}</h1>
+            </div>
+        ) : (
+            <h1>error fetching user data</h1>
+        )
+    }
+</div>

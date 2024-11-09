@@ -1,5 +1,8 @@
 ---
-import Layout from "../Layout.astro"
+import Layout from "../components/Layout.astro"
+import Calendar from "../components/Calendar.astro"
+import UserData from "../components/UserData.astro"
+import Logout from "../components/Logout.astro"
 import { supabase } from "../lib/supabase"
 
 // checks if the user is logged in through the cookies
@@ -59,29 +62,24 @@ if (osis) {
     desc="Track attendance and see upcoming events for StuyPulse"
 >
     <h1 class="w-fit mx-auto m-3 text-3xl">MyPulse</h1>
-    <div class="mx-auto w-fit space-y-3">
-        <h1 class="text-center">OSIS: {osis}</h1>
 
-        {
-            userData ? (
-                <div class="text-center ">
-                    <h1>Number of checkins: {userData.num_checkins}</h1>
-                    <h1>Attendance Rate: {userData.attendance_rate_percent}</h1>
-                    <h1>Number of checkouts: {userData.num_checkouts}</h1>
-                    <h1>Checkout Rate: {userData.checkout_rate_percent}</h1>
-                    <h1>Total hours: {userData.total_hours}</h1>
-                    <h1>Average hours: {userData.average_hours}</h1>
-                </div>
-            ) : (
-                <h1>error fetching user data</h1>
-            )
-        }
+    <h1 class="text-center">OSIS: {osis}</h1>
 
-        <form action="/api/auth/logout">
-            <button
-                class="text-center border-2 rounded-lg w-[200px]"
-                type="submit">Log out</button
-            >
-        </form>
+    
+    <Logout />
+    <div class="flex flex-wrap max-w-[80vw] w-[500px] mx-auto my-6 items-center space-y-3">
+        <UserData userData={userData}/>
+
+        <!-- TODO: add a way to host meeting status in database -->
+        <!-- my idea is to have a new table in the supabase that has one row to store all the meetings -->
+        <!-- every other row would be an osis and a list of the meetings they went to -->
+        <!-- probably write a python file to do this by going through the csv files -->
+        <Calendar meetings={{
+            "2024-11-13": "future",
+            "2024-11-08": "yes",
+            "2024-11-06": "yes",
+            "2024-11-04": "no",
+        }}/>
     </div>
+    
 </Layout>
