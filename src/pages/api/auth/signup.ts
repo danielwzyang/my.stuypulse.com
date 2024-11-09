@@ -15,8 +15,10 @@ export const POST: APIRoute = async ({ request, redirect }) => {
     const { error } = await supabase
         .from('total_attendance')
         .select('id_number')
-        .eq('id_number', osis)
+        .eq("id_number", osis)
         .single()
+    
+    console.log(error)
 
     if (error) return new Response("OSIS not in database", { status: 500 })
 
