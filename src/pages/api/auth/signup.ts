@@ -10,8 +10,8 @@ export const POST: APIRoute = async ({ request, redirect }) => {
     // TODO: handle errors with the api and display as text in form page
 
     // handling errors with osis and password input
-    if (!osis || !password) return new Response("OSIS and password are required.", { status: 400 })
-    if (isNaN(Number(osis))) return new Response("Invalid OSIS format.", { status: 400 })
+    if (!osis || !password) return new Response("OSIS and password are required", { status: 400 })
+    if (isNaN(Number(osis))) return new Response("Invalid OSIS", { status: 400 })
 
     // TODO: add check for osis to see if it's in database
 

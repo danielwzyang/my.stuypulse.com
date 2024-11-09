@@ -10,8 +10,8 @@ export const POST: APIRoute = async ({ request, cookies, redirect }) => {
     // TODO: handle errors with the api and display as text in form page
 
     // handling errors with osis and password input
-    if (!osis || !password) return new Response("OSIS and password are required.", { status: 400 })
-    if (isNaN(Number(osis))) return new Response("OSIS must be a 9 digit number.", { status: 400 })
+    if (!osis || !password) return new Response("OSIS and password are required", { status: 400 })
+    if (isNaN(Number(osis))) return new Response("Invalid OSIS", { status: 400 })
 
     // log in with supabase and handle any errors
     const { data, error } = await supabase.auth.signInWithPassword({ email: osis + "@email.com", password })

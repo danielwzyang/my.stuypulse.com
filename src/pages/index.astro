@@ -1,49 +1,57 @@
 ---
-import Layout from "../Layout.astro";
-import { supabase } from "../lib/supabase";
+import Layout from "../Layout.astro"
+import { supabase } from "../lib/supabase"
 
 // checks if the user is logged in through the cookies
 // if they aren't logged in then we redirect them to login
-const accessToken = Astro.cookies.get("sb-access-token");
-const refreshToken = Astro.cookies.get("sb-refresh-token");
-if (!accessToken || !refreshToken) return Astro.redirect("/login");
+const accessToken = Astro.cookies.get("sb-access-token")
+const refreshToken = Astro.cookies.get("sb-refresh-token")
+if (!accessToken || !refreshToken) return Astro.redirect("/login")
 
-if (!accessToken || !refreshToken) {
-    return Astro.redirect("/signin");
-}
-
-let session;
+let session
 try {
     // uses the cookies to set the session
     session = await supabase.auth.setSession({
         refresh_token: refreshToken.value,
         access_token: accessToken.value,
-    });
+    })
 
     // if there's an error then the tokens are deleted and user is redirected to login
     if (session.error) {
         Astro.cookies.delete("sb-access-token", {
             path: "/",
-        });
+        })
         Astro.cookies.delete("sb-refresh-token", {
             path: "/",
-        });
+        })
 
-        return Astro.redirect("/login");
+        return Astro.redirect("/login")
     }
 } catch (error) {
-    // same thing as above; error handling
+    // same thing as above error handling
     Astro.cookies.delete("sb-access-token", {
         path: "/",
-    });
+    })
     Astro.cookies.delete("sb-refresh-token", {
         path: "/",
-    });
-    return Astro.redirect("/login");
+    })
+    return Astro.redirect("/login")
 }
 
 // the osis is stored as email in the supabase database
-const osis = session.data.user?.email?.substring(0, 9);
+const osis = session.data.user?.email?.substring(0, 9)
+
+let userData
+if (osis) {
+    // gets the user row from the database
+    const { data, error } = await supabase
+        .from("total_attendance")
+        .select("*")
+        .eq("id_number", osis)
+
+    if (error) console.error("error fetching data")
+    else userData = data[0]
+}
 ---
 
 <Layout
@@ -53,6 +61,22 @@ const osis = session.data.user?.email?.substring(0, 9);
     <h1 class="w-fit mx-auto m-3 text-3xl">MyPulse</h1>
     <div class="mx-auto w-fit space-y-3">
         <h1 class="text-center">OSIS: {osis}</h1>
+
+        {
+            userData ? (
+                <div class="text-center ">
+                    <h1>Number of checkins: {userData.num_checkins}</h1>
+                    <h1>Attendance Rate: {userData.attendance_rate_percent}</h1>
+                    <h1>Number of checkouts: {userData.num_checkouts}</h1>
+                    <h1>Checkout Rate: {userData.checkout_rate_percent}</h1>
+                    <h1>Total hours: {userData.total_hours}</h1>
+                    <h1>Average hours: {userData.average_hours}</h1>
+                </div>
+            ) : (
+                <h1>error fetching user data</h1>
+            )
+        }
+
         <form action="/api/auth/logout">
             <button
                 class="text-center border-2 rounded-lg w-[200px]"
