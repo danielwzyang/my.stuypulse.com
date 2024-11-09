@@ -1,16 +1,63 @@
 ---
+import Layout from "../Layout.astro";
+import { supabase } from "../lib/supabase";
 
+// checks if the user is logged in through the cookies
+// if they aren't logged in then we redirect them to login
+const accessToken = Astro.cookies.get("sb-access-token");
+const refreshToken = Astro.cookies.get("sb-refresh-token");
+if (!accessToken || !refreshToken) return Astro.redirect("/login");
+
+if (!accessToken || !refreshToken) {
+    return Astro.redirect("/signin");
+}
+
+let session;
+try {
+    // uses the cookies to set the session
+    session = await supabase.auth.setSession({
+        refresh_token: refreshToken.value,
+        access_token: accessToken.value,
+    });
+
+    // if there's an error then the tokens are deleted and user is redirected to login
+    if (session.error) {
+        Astro.cookies.delete("sb-access-token", {
+            path: "/",
+        });
+        Astro.cookies.delete("sb-refresh-token", {
+            path: "/",
+        });
+
+        return Astro.redirect("/login");
+    }
+} catch (error) {
+    // same thing as above; error handling
+    Astro.cookies.delete("sb-access-token", {
+        path: "/",
+    });
+    Astro.cookies.delete("sb-refresh-token", {
+        path: "/",
+    });
+    return Astro.redirect("/login");
+}
+
+// the osis is stored as email in the supabase database
+const osis = session.data.user?.email?.substring(0, 9);
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<Layout
+    title="MyPulse"
+    desc="Track attendance and see upcoming events for StuyPulse"
+>
+    <h1 class="w-fit mx-auto m-3 text-3xl">MyPulse</h1>
+    <div class="mx-auto w-fit space-y-3">
+        <h1 class="text-center">OSIS: {osis}</h1>
+        <form action="/api/auth/logout">
+            <button
+                class="text-center border-2 rounded-lg w-[200px]"
+                type="submit">Log out</button
+            >
+        </form>
+    </div>
+</Layout>

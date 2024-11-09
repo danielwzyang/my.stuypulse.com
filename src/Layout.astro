@@ -1,0 +1,23 @@
+---
+interface Props {
+	title: string
+    desc: string
+}
+
+const { title, desc } = Astro.props
+import "@fontsource/sora"
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="description" content={desc} />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/svg+xml" href="/mypulse/favicon.svg" />
+		<title>{title}</title>
+	</head>
+	<body>
+		<slot />
+	</body>
+</html>

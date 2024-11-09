@@ -1,0 +1,52 @@
+---
+import Layout from "../Layout.astro"
+
+const { cookies, redirect } = Astro
+
+// checks to see if the user is already logged in using cookies
+const accessToken = cookies.get("sb-access-token")
+const refreshToken = cookies.get("sb-refresh-token")
+
+if (accessToken && refreshToken) return redirect("/")
+---
+
+<Layout title="Login" desc="Login to MyPulse">
+    <div class="flex flex-col justify-center items-center h-[80vh] space-y-2">
+        <form
+            action="/api/auth/login"
+            method="post"
+            class="flex flex-col gap-y-2 w-[200px]"
+        >
+            <input
+                class="text-center border-2 rounded-lg"
+                placeholder="enter osis:"
+                name="osis"
+                id="osis"
+                minlength="9"
+                required
+            />
+
+            <input
+                class="text-center border-2 rounded-lg"
+                placeholder="enter password:"
+                type="password"
+                name="password"
+                id="password"
+                minlength="6"
+                required
+            />
+
+            <button
+                class="text-center border-2 rounded-lg"
+                type="submit"
+            >
+                Login
+            </button>
+        </form>
+
+        <h1 class="pt-5 text-sm">Don't have an account?</h1>
+        <a href="/signup" class="text-center border-2 rounded-lg w-[150px]">
+            Sign up
+        </a>
+    </div>
+</Layout>

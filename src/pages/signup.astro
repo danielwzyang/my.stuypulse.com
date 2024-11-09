@@ -1,0 +1,41 @@
+---
+import Layout from "../Layout.astro"
+---
+
+<Layout title="Signup" desc="Signup to MyPulse">
+    <div class="flex flex-col justify-center items-center h-[80vh] space-y-2">
+        <form
+            action="/api/auth/signup"
+            method="post"
+            class="flex flex-col gap-y-2 w-[200px]"
+        >
+            <input
+                class="text-center border-2 rounded-lg"
+                placeholder="enter osis:"
+                name="osis"
+                id="osis"
+                minlength="9"
+                required
+            />
+
+            <input
+                class="text-center border-2 rounded-lg"
+                placeholder="enter password:"
+                type="password"
+                name="password"
+                id="password"
+                minlength="6"
+                required
+            />
+
+            <button class="text-center border-2 rounded-lg" type="submit">
+                Sign up
+            </button>
+        </form>
+
+        <h1 class="pt-5 text-sm">Already have an account?</h1>
+        <a href="/login" class="text-center border-2 rounded-lg w-[150px]">
+            Log in
+        </a>
+    </div>
+</Layout>
