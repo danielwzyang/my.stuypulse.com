@@ -49,4 +49,4 @@ with open(sys.argv[1]) as file:
     newData = [{"id": id, "meetings": list(meetings)} for id, meetings in ids.items()]
     supabase.table("meetings").upsert(newData).execute()
 
-    supabase.table("meetings").upsert({"id": "all", "meetings": list(allMeetings)})
+    supabase.table("meetings").upsert({"id": "all", "meetings": list(allMeetings)}).execute()
