@@ -11,6 +11,7 @@ const accessToken = Astro.cookies.get("sb-access-token")
 const refreshToken = Astro.cookies.get("sb-refresh-token")
 if (!accessToken || !refreshToken) return Astro.redirect("/login")
 
+// handles session
 let session
 try {
     // uses the cookies to set the session
@@ -55,6 +56,22 @@ if (osis) {
     if (error) console.error("error fetching data")
     else userData = data[0]
 }
+
+// fetches all the meetings and the meetings that the user went to
+let meetings: string[] = []
+let allMeetings: string[] = []
+
+const response = await fetch(new URL(`/api/fetch/meetings`, Astro.url), {
+    method: "GET"
+})
+
+if (!response.ok) console.error("Error while fetching meetings data")
+else {
+    // updates meetings
+    const data = await response.json()
+    meetings = data[0].meetings || []
+    allMeetings = data[1].meetings || []
+}
 ---
 
 <Layout
@@ -74,12 +91,13 @@ if (osis) {
         <!-- my idea is to have a new table in the supabase that has one row to store all the meetings -->
         <!-- every other row would be an osis and a list of the meetings they went to -->
         <!-- probably write a python file to do this by going through the csv files -->
-        <Calendar meetings={{
-            "2024-11-13": "future",
-            "2024-11-08": "yes",
-            "2024-11-06": "yes",
-            "2024-11-04": "no",
-        }}/>
+        <Calendar meetings={meetings} allMeetings={allMeetings}/>
+        
     </div>
-    
 </Layout>
+
+<script define:vars={osis}>
+    // fetches all the user's status for all the meetings
+    let meetings = {}
+    
+</script>

@@ -1,9 +1,10 @@
 ---
 interface Props {
-    meetings: { [date: string]: string }
+    meetings: string[]
+    allMeetings: string[]
 }
 
-const { meetings } = Astro.props
+const { meetings, allMeetings } = Astro.props
 ---
 
 <div class="mx-auto w-fit">
@@ -19,7 +20,7 @@ const { meetings } = Astro.props
     <div id="dates" class="grid grid-cols-7 text-center"></div>
 </div>
 
-<script define:vars={{meetings}}>
+<script define:vars={{meetings, allMeetings}}>
     console.log(meetings)
     let date = new Date()
     let year = date.getFullYear()
@@ -85,6 +86,8 @@ const { meetings } = Astro.props
         // gets the date of the last day of the current month
         const lastDate = new Date(year, month + 1, 0).getDate()
 
+        const today = new Date()
+
         // adds the days of the current month
         for (let i = 1; i <= lastDate; i++) {
             const dayElement = document.createElement("div")
@@ -92,28 +95,28 @@ const { meetings } = Astro.props
             dayElement.className = activeStyle
 
             // checks if the day is a meeting
-            const curDate = `${year}-${(month + 1).toString().padStart(2, "0")}-${i.toString().padStart(2, "0")}`
-            const status = meetings[curDate]
-            if (status) {
+            const dateString = `${year}-${(month + 1).toString().padStart(2, "0")}-${i.toString().padStart(2, "0")}`
+            
+            if (allMeetings.includes(dateString)) {
                 dayElement.className += meetingStyle
-                
-                switch (status) {
-                    case "no":
-                        dayElement.className += " bg-[#e03a56]"
-                        break
-                    case "yes":
-                        dayElement.className += " bg-[#4dd67b]"
-                        break
-                    case "future":
-                        dayElement.className += " bg-[#cccccc]"
+
+                // checks if the meeting is in the future or in the past
+                const curDate = new Date(year, month, i)
+
+                // meeting is in the past
+                if (curDate < today) {
+                    // checks if the person went to the meeting or not and colors appropriately
+                    if (meetings.includes(dateString))
+                        dayElement.className += " bg-[#5ae072]"
+                    else
+                        dayElement.className += " bg-[#eb384a]"
                 }
+                // meeting is in the future
+                else dayElement.className += " bg-[#cccccc]"
             }
-                
 
             dates?.appendChild(dayElement)
         }
-
-
 
         // gets the day of the week of the last day of the current month
         const lastDay = new Date(year, month + 1, 0).getDay()
