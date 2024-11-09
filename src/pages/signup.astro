@@ -24,7 +24,6 @@ import Form from "../components/Form.astro"
             // if there are no errors and sign up is successful
             if (response.ok) window.location.href = "/"
             else {
-                console.log(response)
                 // gets the error msg from the response
                 const text = await response.text()
 

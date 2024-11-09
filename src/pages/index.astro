@@ -74,30 +74,14 @@ else {
 }
 ---
 
-<Layout
-    title="MyPulse"
-    desc="Track attendance and see upcoming events for StuyPulse"
->
+<Layout title="MyPulse" desc="Track attendance and see upcoming events for StuyPulse">
     <h1 class="w-fit mx-auto m-3 text-3xl">MyPulse</h1>
 
     <h1 class="text-center">OSIS: {osis}</h1>
 
-    
     <Logout />
     <div class="flex flex-wrap max-w-[80vw] w-[500px] mx-auto my-6 items-center space-y-3">
         <UserData userData={userData}/>
-
-        <!-- TODO: add a way to host meeting status in database -->
-        <!-- my idea is to have a new table in the supabase that has one row to store all the meetings -->
-        <!-- every other row would be an osis and a list of the meetings they went to -->
-        <!-- probably write a python file to do this by going through the csv files -->
         <Calendar meetings={meetings} allMeetings={allMeetings}/>
-        
     </div>
 </Layout>
-
-<script define:vars={osis}>
-    // fetches all the user's status for all the meetings
-    let meetings = {}
-    
-</script>

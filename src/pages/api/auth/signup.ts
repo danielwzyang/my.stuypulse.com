@@ -17,8 +17,6 @@ export const POST: APIRoute = async ({ request, redirect }) => {
         .select("id_number")
         .eq("id_number", osis)
         .single()
-    
-    console.log(error)
 
     if (error) return new Response("OSIS not in database", { status: 500 })
 
