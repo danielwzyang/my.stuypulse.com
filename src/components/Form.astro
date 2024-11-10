@@ -6,37 +6,35 @@ interface Props {
 const { type } = Astro.props
 ---
 
-<div class="flex flex-col justify-center items-center h-[80vh] space-y-2">
-    <form id="form" class="flex flex-col gap-y-2 w-[200px]">
-        <input
-            class="text-center border-2 rounded-lg"
-            placeholder="enter osis:"
-            name="osis"
-            id="osis"
-            minlength="9"
-            required
-        />
+<form id="form" class="flex flex-col gap-y-2 w-[200px]">
+    <input
+        class="text-center border-2 p-2 rounded-xl"
+        placeholder="enter osis:"
+        name="osis"
+        id="osis"
+        minlength="9"
+        required
+    />
 
-        <input
-            class="text-center border-2 rounded-lg"
-            placeholder="enter password:"
-            type="password"
-            name="password"
-            id="password"
-            minlength="6"
-            required
-        />
+    <input
+        class="text-center border-2 p-2 rounded-xl"
+        placeholder="enter password:"
+        type="password"
+        name="password"
+        id="password"
+        minlength="6"
+        required
+    />
 
-        <button class="text-center border-2 rounded-lg" type="submit">
-            { type === "login" ? "Log in" : "Sign up"}
-        </button>
-    </form>
-    <h1 id="error" class="text-sm text-[#eb3446]"></h1>
+    <button class="text-center border-2 p-2 rounded-xl" type="submit">
+        { type === "login" ? "Log in" : "Sign up"}
+    </button>
+</form>
+<h1 id="error" class="text-sm text-[#eb3446]"></h1>
 
-    <h1 class="pt-5 text-sm">
-        { type === "login" ? "Don't have an account?" : "Already have an account?"}
-    </h1>
-    <a href={ type === "login" ? "/signup" : "/login"} class="text-center border-2 rounded-lg w-[150px]">
-        { type === "login" ? "Sign up" : "Log in"}
-    </a>
-</div>
+<h1 class="pt-5 text-sm">
+    { type === "login" ? "Don't have an account?" : "Already have an account?"}
+</h1>
+<a href={ type === "login" ? "/signup" : "/"} class="text-center border-2 p-2 rounded-xl w-[200px]">
+    { type === "login" ? "Sign up" : "Log in"}
+</a>

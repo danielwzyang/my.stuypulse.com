@@ -24,5 +24,5 @@ export const POST: APIRoute = async ({ request, redirect }) => {
     const { error: signUpError } = await supabase.auth.signUp({ email: osis + "@email.com", password })
     if (signUpError) return new Response(signUpError.message, { status: 500 })
 
-    return redirect("/login")
+    return redirect("/")
 }

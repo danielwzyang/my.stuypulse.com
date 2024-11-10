@@ -1,87 +1,49 @@
 ---
 import Layout from "../components/Layout.astro"
-import Calendar from "../components/Calendar.astro"
-import UserData from "../components/UserData.astro"
-import Logout from "../components/Logout.astro"
-import { supabase } from "../lib/supabase"
 
-// checks if the user is logged in through the cookies
-// if they aren't logged in then we redirect them to login
-const accessToken = Astro.cookies.get("sb-access-token")
-const refreshToken = Astro.cookies.get("sb-refresh-token")
-if (!accessToken || !refreshToken) return Astro.redirect("/login")
+const { cookies, redirect } = Astro
 
-// handles session
-let session
-try {
-    // uses the cookies to set the session
-    session = await supabase.auth.setSession({
-        refresh_token: refreshToken.value,
-        access_token: accessToken.value,
-    })
+// checks to see if the user is already logged in using cookies
+const accessToken = cookies.get("sb-access-token")
+const refreshToken = cookies.get("sb-refresh-token")
 
-    // if there's an error then the tokens are deleted and user is redirected to login
-    if (session.error) {
-        Astro.cookies.delete("sb-access-token", {
-            path: "/",
-        })
-        Astro.cookies.delete("sb-refresh-token", {
-            path: "/",
-        })
+if (accessToken && refreshToken) return redirect("/dashboard")
 
-        return Astro.redirect("/login")
-    }
-} catch (error) {
-    // same thing as above error handling
-    Astro.cookies.delete("sb-access-token", {
-        path: "/",
-    })
-    Astro.cookies.delete("sb-refresh-token", {
-        path: "/",
-    })
-    return Astro.redirect("/login")
-}
-
-// the osis is stored as email in the supabase database
-const osis = session.data.user?.email?.substring(0, 9)
-
-let userData
-if (osis) {
-    // gets the user row from the database
-    const { data, error } = await supabase
-        .from("total_attendance")
-        .select("*")
-        .eq("id_number", osis)
-
-    if (error) console.error("error fetching data")
-    else userData = data[0]
-}
-
-// fetches all the meetings and the meetings that the user went to
-let meetings: string[] = []
-let allMeetings: string[] = []
-
-const response = await fetch(new URL(`/api/fetch/meetings`, Astro.url), {
-    method: "GET"
-})
-
-if (!response.ok) console.error("Error while fetching meetings data")
-else {
-    // updates meetings
-    const data = await response.json()
-    meetings = data[0].meetings || []
-    allMeetings = data[1].meetings || []
-}
+import Form from "../components/Form.astro"
 ---
 
-<Layout title="MyPulse" desc="Track attendance and see upcoming events for StuyPulse">
-    <h1 class="w-fit mx-auto m-3 text-3xl">MyPulse</h1>
-
-    <h1 class="text-center">OSIS: {osis}</h1>
-
-    <Logout />
-    <div class="flex flex-wrap max-w-[80vw] w-[500px] mx-auto my-6 items-center space-y-3">
-        <UserData userData={userData}/>
-        <Calendar meetings={meetings} allMeetings={allMeetings}/>
+<Layout title="MyPulse" desc="Login to MyPulse">
+    <div class="flex flex-col justify-center items-center min-h-[80vh] space-y-2">
+        <h1 class="w-fit mx-auto m-3 text-4xl">MyPulse</h1>
+        <Form type="login" />
     </div>
+    
+
+    <script>
+        // gets the form element
+        const form = document.getElementById("form")
+
+        form?.addEventListener("submit", async (event) => {
+            // prevent default stops the default functionality so we can handle it ourselves
+            event.preventDefault()
+
+            const data = new FormData(form as HTMLFormElement)
+
+            const response = await fetch("/api/auth/login", {
+                method: "POST",
+                body: data,
+            })
+
+            // if there are no errors and login is successful
+            if (response.ok) window.location.href = "/dashboard"
+            else {
+                // gets the error msg from the response
+                const text = await response.text()
+
+                // gets the error element and sets the text
+                const error = document.getElementById("error")
+                error!.textContent = text
+            }
+        })
+    </script>
 </Layout>

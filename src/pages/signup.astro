@@ -3,8 +3,11 @@ import Layout from "../components/Layout.astro"
 import Form from "../components/Form.astro"
 ---
 
-<Layout title="Signup" desc="Signup to MyPulse">
-    <Form type="signup" />
+<Layout title="Signup | MyPulse" desc="Signup to MyPulse">
+    <div class="flex flex-col justify-center items-center min-h-[80vh] space-y-2">
+        <h1 class="w-fit mx-auto m-3 text-4xl">Sign Up</h1>
+        <Form type="signup" />
+    </div>
 
     <script>
         // gets the form element
@@ -22,7 +25,7 @@ import Form from "../components/Form.astro"
             })
 
             // if there are no errors and sign up is successful
-            if (response.ok) window.location.href = "/"
+            if (response.ok) window.location.href = "/dashboard"
             else {
                 // gets the error msg from the response
                 const text = await response.text()

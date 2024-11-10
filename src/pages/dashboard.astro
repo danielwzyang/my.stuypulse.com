@@ -1,0 +1,89 @@
+---
+import Layout from "../components/Layout.astro"
+import Calendar from "../components/Calendar.astro"
+import UserData from "../components/UserData.astro"
+import Logout from "../components/Logout.astro"
+import { supabase } from "../lib/supabase"
+
+// checks if the user is logged in through the cookies
+// if they aren't logged in then we redirect them to login
+const accessToken = Astro.cookies.get("sb-access-token")
+const refreshToken = Astro.cookies.get("sb-refresh-token")
+if (!accessToken || !refreshToken) return Astro.redirect("/login")
+
+// handles session
+let session
+try {
+    // uses the cookies to set the session
+    session = await supabase.auth.setSession({
+        refresh_token: refreshToken.value,
+        access_token: accessToken.value,
+    })
+
+    // if there's an error then the tokens are deleted and user is redirected to login
+    if (session.error) {
+        Astro.cookies.delete("sb-access-token", {
+            path: "/",
+        })
+        Astro.cookies.delete("sb-refresh-token", {
+            path: "/",
+        })
+
+        return Astro.redirect("/login")
+    }
+} catch (error) {
+    // same thing as above error handling
+    Astro.cookies.delete("sb-access-token", {
+        path: "/",
+    })
+    Astro.cookies.delete("sb-refresh-token", {
+        path: "/",
+    })
+    return Astro.redirect("/login")
+}
+
+// the osis is stored as email in the supabase database
+const osis = session.data.user?.email?.substring(0, 9)
+
+let userData
+if (osis) {
+    // gets the user row from the database
+    const { data, error } = await supabase
+        .from("total_attendance")
+        .select("*")
+        .eq("id_number", osis)
+
+    if (error) console.error("error fetching data")
+    else userData = data[0]
+}
+
+// fetches all the meetings and the meetings that the user went to
+let meetings: string[] = []
+let allMeetings: string[] = []
+
+const response = await fetch(new URL(`/api/fetch/meetings`, Astro.url), {
+    method: "GET"
+})
+
+if (!response.ok) console.error("Error while fetching meetings data")
+else {
+    // updates meetings
+    const data = await response.json()
+    meetings = data[0].meetings || []
+    allMeetings = data[1].meetings || []
+}
+---
+
+<Layout title="Dashboard | MyPulse" desc="Track attendance and see upcoming events for StuyPulse">
+    <div class="flex flex-col justify-center min-h-[80vh]">
+        <h1 class="mb-5 text-4xl text-center">{osis}</h1>
+            
+        <div class="flex flex-col w-full items-center mb-5 space-y-3">
+            <div class="flex flex-wrap gap-3 justify-center mx-3">
+                <Calendar meetings={meetings} allMeetings={allMeetings}/>
+                <UserData userData={userData}/>
+            </div>
+            <Logout />
+        </div>
+    </div>
+</Layout>
