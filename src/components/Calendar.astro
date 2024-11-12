@@ -21,11 +21,6 @@ const { meetings, allMeetings } = Astro.props
 </div>
 
 <script define:vars={{meetings, allMeetings}}>
-    // temporary since I can't figure out what's happening with this a bug on the real website
-    // unable to recreate on localhost
-    console.log("meetings:", meetings)
-    console.log("all meetings:", allMeetings) 
-
     let date = new Date()
     let year = date.getFullYear()
     let month = date.getMonth()
