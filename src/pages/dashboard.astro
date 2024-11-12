@@ -61,7 +61,7 @@ if (osis) {
 let meetings: string[] = []
 let allMeetings: string[] = []
 
-const response = await fetch(new URL(`/api/fetch/meetings`, Astro.url), {
+const response = await fetch(new URL(`/api/fetch/meetings?osis=${osis}`, Astro.url), {
     method: "GET"
 })
 
@@ -69,8 +69,8 @@ if (!response.ok) console.error("Error while fetching meetings data")
 else {
     // updates meetings
     const data = await response.json()
-    meetings = data[0].meetings || []
-    allMeetings = data[1].meetings || []
+    meetings = data[0] || []
+    allMeetings = data[1] || []
 }
 ---
 
