@@ -9,7 +9,7 @@ import { supabase } from "../lib/supabase"
 // if they aren't logged in then we redirect them to login
 const accessToken = Astro.cookies.get("sb-access-token")
 const refreshToken = Astro.cookies.get("sb-refresh-token")
-if (!accessToken || !refreshToken) return Astro.redirect("/login")
+if (!accessToken || !refreshToken) return Astro.redirect("/")
 
 // handles session
 let session
