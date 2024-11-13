@@ -21,6 +21,10 @@ const { meetings, allMeetings } = Astro.props
 </div>
 
 <script define:vars={{meetings, allMeetings}}>
+    // temp debug
+    console.log(meetings, allMeetings)
+
+    
     let date = new Date()
     let year = date.getFullYear()
     let month = date.getMonth()
