@@ -106,8 +106,8 @@ const { meetings, allMeetings } = Astro.props
 
                 // checks if the meeting is in the future or in the past
 
-                // meeting is in the past or today
-                if (curDate <= today) {
+                // meeting is in the past
+                if (curDate < today) {
                     // checks if the person went to the meeting or not and colors appropriately
                     if (meetings.includes(dateString))
                         dayElement.className += " bg-[#77dd77]"
