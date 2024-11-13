@@ -3,7 +3,7 @@ export const prerender = false
 import type { APIRoute } from "astro"
 import { supabase } from "../../../lib/supabase"
 
-export const POST: APIRoute = async ({ request, redirect }) => {
+export const POST: APIRoute = async ({ request, cookies, redirect }) => {
     const formData = await request.formData()
     const osis = formData.get("osis")?.toString(), password = formData.get("password")?.toString()
 
@@ -23,5 +23,18 @@ export const POST: APIRoute = async ({ request, redirect }) => {
     const { error: signUpError } = await supabase.auth.signUp({ email: osis + "@email.com", password })
     if (signUpError) return new Response(signUpError.message, { status: 500 })
 
-    return redirect("/")
+    // log in with supabase and handle any errors
+    const { data, error: logInError } = await supabase.auth.signInWithPassword({ email: osis + "@email.com", password })
+    if (logInError) return new Response(logInError.message, { status: 500 })
+    
+    // save the account session using cookies
+    const { access_token, refresh_token } = data.session
+    cookies.set("sb-access-token", access_token, {
+        path: "/",
+    })
+    cookies.set("sb-refresh-token", refresh_token, {
+        path: "/",
+    })
+
+    return redirect("/dashboard")
 }

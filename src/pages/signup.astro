@@ -1,11 +1,19 @@
 ---
 import Layout from "../components/Layout.astro"
 import Form from "../components/Form.astro"
+
+const { cookies, redirect } = Astro
+
+// checks to see if the user is already logged in using cookies
+const accessToken = cookies.get("sb-access-token")
+const refreshToken = cookies.get("sb-refresh-token")
+
+if (accessToken && refreshToken) return redirect("/dashboard")
 ---
 
 <Layout title="Signup | MyPulse" desc="Signup to MyPulse">
-    <div class="flex flex-col justify-center items-center min-h-[80vh] space-y-2">
-        <h1 class="w-fit mx-auto m-3 text-4xl">Sign Up</h1>
+    <div class="flex flex-col justify-center items-center min-h-[80vh] space-y-5">
+        <h1 class="text-center text-4xl">Sign Up</h1>
         <Form type="signup" />
     </div>
 

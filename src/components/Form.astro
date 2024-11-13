@@ -6,7 +6,7 @@ interface Props {
 const { type } = Astro.props
 ---
 
-<form id="form" class="flex flex-col gap-y-2 w-[200px]">
+<form id="form" class="flex flex-col gap-2 w-[200px]">
     <input
         class="text-center border-2 p-2 rounded-xl"
         placeholder="enter osis:"
@@ -32,9 +32,12 @@ const { type } = Astro.props
 </form>
 <h1 id="error" class="text-sm text-[#eb3446]"></h1>
 
-<h1 class="pt-5 text-sm">
-    { type === "login" ? "Don't have an account?" : "Already have an account?"}
-</h1>
-<a href={ type === "login" ? "/signup" : "/"} class="text-center border-2 p-2 rounded-xl w-[200px]">
-    { type === "login" ? "Sign up" : "Log in"}
-</a>
+
+<div class="flex flex-col gap-2 w-[200px]">
+    <h1 class="text-sm text-center">
+        { type === "login" ? "Don't have an account?" : "Already have an account?"}
+    </h1>
+    <a href={ type === "login" ? "/signup" : "/"} class="text-center border-2 p-2 rounded-xl w-[200px]">
+        { type === "login" ? "Sign up" : "Log in"}
+    </a>
+</div>
