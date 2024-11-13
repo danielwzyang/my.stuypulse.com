@@ -21,7 +21,7 @@ with open(sys.argv[1]) as file:
     
     # saves all the meetings
     # the sets prevent duplicates and allow for quicker lookup
-    allMeetings = supabase.table("meetings").select("meetings").eq("id", id).execute().data
+    allMeetings = supabase.table("meetings").select("meetings").eq("id", "all").execute().data
     allMeetings = set(allMeetings[0]["meetings"]) if allMeetings else set()
 
     # intializes the data with meetings already in the database
