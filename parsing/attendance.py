@@ -17,13 +17,14 @@ supabase = create_client(url, key)
 
 # opens up the csv
 with open(sys.argv[1]) as file:
-    rows = csv.DictReader(file)
+    rows = list(csv.DictReader(file))
+    size = len(rows)
     
     data = []
 
-    i = 0
+    i = 1
     for row in rows:
-        print("row", i)
+        print(f"{i}/{size}")
         i += 1
 
         id_number = row["id_number"]

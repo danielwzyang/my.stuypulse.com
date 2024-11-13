@@ -17,7 +17,8 @@ supabase = create_client(url, key)
 
 # opens up the csv
 with open(sys.argv[1]) as file:
-    rows = csv.DictReader(file)
+    rows = list(csv.DictReader(file))
+    size = len(rows)
     
     # saves all the meetings
     # the sets prevent duplicates and allow for quicker lookup
@@ -29,9 +30,9 @@ with open(sys.argv[1]) as file:
     userMeetings = supabase.table("meetings").select("*").execute().data
     data = {item["id"]: set(item["meetings"]) for item in userMeetings}
 
-    i = 0
+    i = 1
     for row in rows:
-        print("row", i)
+        print(f"{i}/{size}")
         i += 1
 
         meeting = row["date"]
