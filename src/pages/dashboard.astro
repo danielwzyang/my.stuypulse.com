@@ -3,6 +3,7 @@ import Layout from "../components/Layout.astro"
 import Calendar from "../components/Calendar.astro"
 import UserData from "../components/UserData.astro"
 import Logout from "../components/Logout.astro"
+import AdminForm from "../components/AdminForm.astro"
 import { supabase } from "../lib/supabase"
 
 // checks if the user is logged in through the cookies
@@ -43,7 +44,11 @@ try {
 }
 
 // the osis is stored as email in the supabase database
-const osis = session.data.user?.email?.substring(0, 9)
+let osis = session.data.user?.email?.split("@")[0]
+
+// if the user is the admin use search params for osis
+if (osis === "admin")
+    osis = Astro.url.searchParams.get("osis") || osis
 
 let userData
 if (osis) {
@@ -75,16 +80,21 @@ else {
 ---
 
 <Layout title="Dashboard | MyPulse" desc="Track attendance and see upcoming events for StuyPulse">
-    <div class="flex flex-col justify-center min-h-[80vh]">
-        <h1 class="mb-2 text-4xl text-center">{osis}</h1>
-        <h1 class="text-center italic text-sm mb-5 text-[#464646]">attendance updated to 11/13</h1>
-            
-        <div class="flex flex-col w-full items-center mb-5 space-y-5">
-            <div class="flex flex-wrap gap-5 justify-center mx-3">
-                <Calendar meetings={meetings} allMeetings={allMeetings}/>
-                <UserData userData={userData}/>
-            </div>
-            <Logout />
-        </div>
+    <div class="flex flex-col items-center justify-center min-h-[80vh]">
+        {
+            osis === "admin" ? <AdminForm />
+            : (
+                <h1 class="mb-2 text-4xl text-center">{osis}</h1>
+                <h1 class="text-center italic text-sm mb-5 text-[#464646]">attendance updated to 11/13</h1>
+                    
+                <div class="flex flex-col w-full items-center mb-5 space-y-5">
+                    <div class="flex flex-wrap gap-5 justify-center mx-3">
+                        <Calendar meetings={meetings} allMeetings={allMeetings}/>
+                        <UserData userData={userData}/>
+                    </div>
+                    <Logout />
+                </div>
+            )
+        }
     </div>
 </Layout>
