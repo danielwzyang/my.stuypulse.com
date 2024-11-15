@@ -1,6 +1,6 @@
 ---
 interface Props {
-    meetings: string[]
+    meetings: string[][]
     allMeetings: string[]
 }
 
@@ -109,7 +109,12 @@ const { meetings, allMeetings } = Astro.props
                 // meeting is in the past
                 if (curDate < today) {
                     // checks if the person went to the meeting or not and colors appropriately
-                    if (meetings.includes(dateString))
+
+                    // went to meeting but didn't check out
+                    if (meetings[0].includes(dateString))
+                        dayElement.className += " bg-[#ffbb73]"
+                    // went to meeting and checked out
+                    else if (meetings[1].includes(dateString))
                         dayElement.className += " bg-[#77dd77]"
                     else
                         dayElement.className += " bg-[#e36873]"

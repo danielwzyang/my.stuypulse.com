@@ -28,7 +28,10 @@ with open(sys.argv[1]) as file:
     # intializes the data with meetings already in the database
     # this prevents overwrites if the csv starts at a more recent time and doesn't contain meetings that the database does
     userMeetings = supabase.table("meetings").select("*").execute().data
-    data = {item["id"]: set(item["meetings"]) for item in userMeetings}
+    
+    # first element of array is meetings the person checked into but didn't check out
+    # second element is meetings the person checked out
+    data = {user["id"]: [set(user["meetings"][0]), set(user["meetings"][1])] for user in userMeetings}
 
     i = 1
     for row in rows:
@@ -37,18 +40,20 @@ with open(sys.argv[1]) as file:
 
         meeting = row["date"]
         id = row["id_number"]
+        checkedOut = row["checkout_time"] != ""
 
         if id not in data:
             # again using sets to prevent duplicates and have quicker lookup
-            data[id] = set()
+            data[id] = [set(), set()]
 
-        # adds the new meeting to the user
-        data[id].add(meeting)
+        # adds the new meeting to the users checked out if they checked out
+        # otherwise adds to the checkedin
+        data[id][1 if checkedOut else 0].add(meeting)
         
         # adds the new meeting to all meetings
         allMeetings.add(meeting)
     
-    newData = [{"id": id, "meetings": list(meetings)} for id, meetings in data.items()]
+    newData = [{"id": id, "meetings": [list(meetings[0]), list(meetings[1])]} for id, meetings in data.items()]
     supabase.table("meetings").upsert(newData).execute()
 
     supabase.table("meetings").upsert({"id": "all", "meetings": list(allMeetings)}).execute()

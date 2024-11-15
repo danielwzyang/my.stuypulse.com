@@ -63,7 +63,7 @@ if (osis) {
 }
 
 // fetches all the meetings and the meetings that the user went to
-let meetings: string[] = []
+let meetings: string[][] = []
 let allMeetings: string[] = []
 
 const response = await fetch(new URL(`/api/fetch/meetings?osis=${osis}`, Astro.url), {
