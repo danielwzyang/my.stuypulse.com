@@ -5,6 +5,7 @@ import UserData from "../components/UserData.astro"
 import Logout from "../components/Logout.astro"
 import AdminForm from "../components/AdminForm.astro"
 import { supabase } from "../lib/supabase"
+import UserDashboard from "../components/UserDashboard.astro"
 
 // checks if the user is logged in through the cookies
 // if they aren't logged in then we redirect them to login
@@ -82,19 +83,9 @@ else {
 <Layout title="Dashboard | MyPulse" desc="Track attendance and see upcoming events for StuyPulse">
     <div class="flex flex-col items-center justify-center min-h-[80vh]">
         {
-            osis === "admin" ? <AdminForm />
-            : (
-                <h1 class="mb-2 text-4xl text-center">{osis}</h1>
-                <h1 class="text-center italic text-sm mb-5 text-[#464646]">attendance updated to 11/13</h1>
-                    
-                <div class="flex flex-col w-full items-center mb-5 space-y-5">
-                    <div class="flex flex-wrap gap-5 justify-center mx-3">
-                        <Calendar meetings={meetings} allMeetings={allMeetings}/>
-                        <UserData userData={userData}/>
-                    </div>
-                    <Logout />
-                </div>
-            )
+            osis === "admin" ? 
+                <AdminForm /> 
+            :   <UserDashboard osis={osis} meetings={meetings} allMeetings={allMeetings} userData={userData} />
         }
     </div>
 </Layout>
