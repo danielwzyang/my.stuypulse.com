@@ -30,7 +30,7 @@ try {
             path: "/",
         })
 
-        return Astro.redirect("/login")
+        return Astro.redirect("/")
     }
 } catch (error) {
     // same thing as above error handling
@@ -40,7 +40,7 @@ try {
     Astro.cookies.delete("sb-refresh-token", {
         path: "/",
     })
-    return Astro.redirect("/login")
+    return Astro.redirect("/")
 }
 
 // the osis is stored as email in the supabase database
