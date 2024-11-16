@@ -49,6 +49,10 @@ with open(sys.argv[1]) as file:
         # adds the new meeting to the users checked out if they checked out
         # otherwise adds to the checkedin
         data[id][1 if checkedOut else 0].add(meeting)
+
+        # if the data is updated and someone checked out of a meeting that previously wasn't in the database it will remove it
+        if checkedOut:
+            data[id][0].discard(meeting)
         
         # adds the new meeting to all meetings
         allMeetings.add(meeting)
