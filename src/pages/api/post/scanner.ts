@@ -80,8 +80,8 @@ export const POST: APIRoute = async ({ request }) => {
 
         // convert the data into an array of objects
         const newAttendanceData = attendanceData.map((
-            [id_number, num_checkins, attendance_rate_percent, num_checkouts, checkout_rate_percent, total_hours, average_hours]) => {
-            return { id_number, num_checkins, attendance_rate_percent, num_checkouts, checkout_rate_percent, total_hours, average_hours }
+            [id_number, first_name, last_name, num_checkins, attendance_rate_percent, num_checkouts, checkout_rate_percent, total_hours, average_hours]) => {
+            return { id_number, first_name, last_name, num_checkins, attendance_rate_percent, num_checkouts, checkout_rate_percent, total_hours, average_hours }    
         })
 
         // upsert the attendance data
