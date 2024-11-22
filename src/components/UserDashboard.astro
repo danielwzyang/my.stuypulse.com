@@ -6,6 +6,8 @@ interface Props {
     allMeetings: string[]
     userData: {
         id_number: string
+        first_name: string
+        last_name: string
         num_checkins: number
         attendance_rate_percent: string
         num_checkouts: number
@@ -22,7 +24,9 @@ import UserData from "./UserData.astro"
 import Logout from "./Logout.astro"
 ---
 
-<h1 class="mb-2 text-4xl text-center">{osis}</h1>
+<h1 class="mb-2 text-4xl text-center">
+    {userData.first_name ? `${userData.first_name} ${userData.last_name}` : osis}
+</h1>
 <h1 class="text-center italic text-sm mb-5 text-[#464646]">
     attendance updated to 11/18
 </h1>
