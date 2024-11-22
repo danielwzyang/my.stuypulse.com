@@ -1,8 +1,5 @@
 ---
 import Layout from "../components/Layout.astro"
-import Calendar from "../components/Calendar.astro"
-import UserData from "../components/UserData.astro"
-import Logout from "../components/Logout.astro"
 import AdminForm from "../components/AdminForm.astro"
 import { supabase } from "../lib/supabase"
 import UserDashboard from "../components/UserDashboard.astro"
@@ -47,38 +44,40 @@ try {
 // the osis is stored as email in the supabase database
 let osis = session.data.user?.email?.split("@")[0]
 
-// if the user is the admin use search params for osis
-if (osis === "admin")
-    osis = Astro.url.searchParams.get("osis") || osis
-
-let userData
-if (osis) {
-    // gets the user row from the database
-    const { data, error } = await supabase
-        .from("total_attendance")
-        .select("*")
-        .eq("id_number", osis)
-
-    if (error) console.error("error fetching data")
-    else userData = data[0]
-}
-
-// fetches all the meetings and the meetings that the user went to
 let checkedOut: string[] = []
 let onlyCheckedIn: string[] = []
 let allMeetings: string[] = []
+let userData
 
-const response = await fetch(new URL(`/api/fetch/meetings?osis=${osis}`, Astro.url), {
-    method: "GET"
-})
+// if the user is the admin use search params for osis
+osis = Astro.url.searchParams.get("osis") || osis
 
-if (!response.ok) console.error("Error while fetching meetings data")
-else {
-    // updates meetings
-    const data = await response.json()
-    checkedOut = data[0]["checkedOut"] || []
-    onlyCheckedIn = data[0]["onlyCheckedIn"] || []
-    allMeetings = data[1]["checkedOut"] || []
+if (osis !== "admin") {
+    if (osis) {
+        // gets the user row from the database
+        const { data, error } = await supabase
+            .from("total_attendance")
+            .select("*")
+            .eq("id_number", osis)
+
+        if (error) console.error("error fetching data")
+        else userData = data[0]
+    }
+
+    // fetches all the meetings and the meetings that the user went to
+
+    const response = await fetch(new URL(`/api/fetch/meetings?osis=${osis}`, Astro.url), {
+        method: "GET"
+    })
+
+    if (!response.ok) console.error("Error while fetching meetings data")
+    else {
+        // updates meetings
+        const data = await response.json()
+        checkedOut = data[0]["checkedOut"] || []
+        onlyCheckedIn = data[0]["onlyCheckedIn"] || []
+        allMeetings = data[1]["checkedOut"] || []
+    }
 }
 ---
 
