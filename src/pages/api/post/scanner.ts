@@ -25,7 +25,7 @@ export const POST: APIRoute = async ({ request }) => {
         // converts the array of objects into one object
         const meetingsObj = meetings.reduce((obj, { id, checkedOut, onlyCheckedIn }) => {
             // the first element of the value is checkedOut and the second is onlyCheckedIn
-            obj[id] = [new Set(checkedOut), new Set(onlyCheckedIn)]
+            obj[id] = { checkedOut: new Set(checkedOut), onlyCheckedIn: new Set(onlyCheckedIn) }
             return obj
         }, {})
 
@@ -39,25 +39,25 @@ export const POST: APIRoute = async ({ request }) => {
 
             // inits the key value pair if the key doesn't exist (ie the id is new)
             if (!(id in meetingsObj))
-                meetingsObj[id] = [new Set(), new Set()]
+                meetingsObj[id] = { checkedOut: new Set(), onlyCheckedIn: new Set() }
 
-            // adds the new meeting to the first list if they checked out otherwise the first list
-            meetingsObj[id][checkedOut ? 0 : 1].add(date)
+            // adds the new meeting to the correct list
+            meetingsObj[id][checkedOut ? "checkedOut" : "onlyCheckedIn"].add(date)
 
             // removes the date from the second list if they have now checked out
             if (checkedOut) meetingsObj[id][1].delete(date)
 
             // adds the meeting to the list of all the meetings
-            meetingsObj["all"][0].add(date)
+            meetingsObj["all"]["checkedOut"].add(date)
         })
 
         // converting the object back into an array of objects
         const newCheckinData = Object.entries(meetingsObj).map(([key, value]) => {
-            const data = value as Set<string>[]
+            const data = value as { checkedOut: string, onlyCheckedIn: string }
             return {
                 id: key,
-                checkedOut: Array.from(data[0]),
-                onlyCheckedIn: Array.from(data[1])
+                checkedOut: Array.from(data["checkedOut"]),
+                onlyCheckedIn: Array.from(data["onlyCheckedIn"])
             }
         })
 
