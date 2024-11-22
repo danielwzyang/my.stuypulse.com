@@ -44,8 +44,8 @@ export const POST: APIRoute = async ({ request }) => {
             // adds the new meeting to the correct list
             meetingsObj[id][checkedOut ? "checkedOut" : "onlyCheckedIn"].add(date)
 
-            // removes the date from the second list if they have now checked out
-            if (checkedOut) meetingsObj[id][1].delete(date)
+            // removes the date from the only checked in if they have now checked out
+            if (checkedOut) meetingsObj[id]["onlyCheckedIn"].delete(date)
 
             // adds the meeting to the list of all the meetings
             meetingsObj["all"]["checkedOut"].add(date)
