@@ -1,10 +1,11 @@
 ---
 interface Props {
-    meetings: string[][]
+    checkedOut: string[]
+    onlyCheckedIn: string[]
     allMeetings: string[]
 }
 
-const { meetings, allMeetings } = Astro.props
+const { checkedOut, onlyCheckedIn, allMeetings } = Astro.props
 ---
 
 <div class="w-[275px] aspect-square flex flex-col justify-center border-2 p-5 rounded-xl">
@@ -20,7 +21,7 @@ const { meetings, allMeetings } = Astro.props
     <div id="dates" class="grid grid-cols-7 text-center"></div>
 </div>
 
-<script define:vars={{meetings, allMeetings}}>
+<script define:vars={{checkedOut, onlyCheckedIn, allMeetings}}>
     let date = new Date()
     let year = date.getFullYear()
     let month = date.getMonth()
@@ -111,10 +112,10 @@ const { meetings, allMeetings } = Astro.props
                     // checks if the person went to the meeting or not and colors appropriately
 
                     // went to meeting but didn't check out
-                    if (meetings[0].includes(dateString))
+                    if (onlyCheckedIn.includes(dateString))
                         dayElement.className += " bg-[#ffbb73]"
                     // went to meeting and checked out
-                    else if (meetings[1].includes(dateString))
+                    else if (checkedOut.includes(dateString))
                         dayElement.className += " bg-[#77dd77]"
                     else
                         dayElement.className += " bg-[#e36873]"

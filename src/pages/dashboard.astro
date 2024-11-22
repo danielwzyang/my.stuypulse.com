@@ -64,7 +64,8 @@ if (osis) {
 }
 
 // fetches all the meetings and the meetings that the user went to
-let meetings: string[][] = []
+let checkedOut: string[] = []
+let onlyCheckedIn: string[] = []
 let allMeetings: string[] = []
 
 const response = await fetch(new URL(`/api/fetch/meetings?osis=${osis}`, Astro.url), {
@@ -75,8 +76,9 @@ if (!response.ok) console.error("Error while fetching meetings data")
 else {
     // updates meetings
     const data = await response.json()
-    meetings = data[0] || []
-    allMeetings = data[1] || []
+    checkedOut = data[0]["checkedOut"] || []
+    onlyCheckedIn = data[0]["onlyCheckedIn"] || []
+    allMeetings = data[1]["checkedOut"] || []
 }
 ---
 
@@ -85,7 +87,7 @@ else {
         {
             osis === "admin" ? 
                 <AdminForm /> 
-            :   <UserDashboard osis={osis} meetings={meetings} allMeetings={allMeetings} userData={userData} />
+            :   <UserDashboard osis={osis} checkedOut={checkedOut} onlyCheckedIn={onlyCheckedIn} allMeetings={allMeetings} userData={userData} />
         }
     </div>
 </Layout>

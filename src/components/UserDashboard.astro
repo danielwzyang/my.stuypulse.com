@@ -1,24 +1,25 @@
 ---
 interface Props {
-    osis: string | undefined;
-    meetings: string[][];
-    allMeetings: string[];
+    osis: string | undefined
+    checkedOut: string[]
+    onlyCheckedIn: string[]
+    allMeetings: string[]
     userData: {
-        id_number: string;
-        num_checkins: number;
-        attendance_rate_percent: string;
-        num_checkouts: number;
-        checkout_rate_percent: string;
-        total_hours: number;
-        average_hours: number;
-    };
+        id_number: string
+        num_checkins: number
+        attendance_rate_percent: string
+        num_checkouts: number
+        checkout_rate_percent: string
+        total_hours: number
+        average_hours: number
+    }
 }
 
-const { osis, meetings, allMeetings, userData } = Astro.props;
+const { osis, checkedOut, onlyCheckedIn, allMeetings, userData } = Astro.props
 
-import Calendar from "./Calendar.astro";
-import UserData from "./UserData.astro";
-import Logout from "./Logout.astro";
+import Calendar from "./Calendar.astro"
+import UserData from "./UserData.astro"
+import Logout from "./Logout.astro"
 ---
 
 <h1 class="mb-2 text-4xl text-center">{osis}</h1>
@@ -42,7 +43,7 @@ import Logout from "./Logout.astro";
                 <h1>Didn't Checkout</h1>
             </div>
         </div>
-        <Calendar meetings={meetings} allMeetings={allMeetings} />
+        <Calendar checkedOut={checkedOut} onlyCheckedIn={onlyCheckedIn} allMeetings={allMeetings} />
         <UserData userData={userData} />
     </div>
     <Logout />

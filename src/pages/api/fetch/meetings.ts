@@ -14,5 +14,5 @@ export const GET: APIRoute = async ({ request }) => {
         .order("id", { ascending: true })
 
     if (error) return new Response(error.message, { status: 500 })
-    return new Response(JSON.stringify(data.map(e => e.meetings)))
+    return new Response(JSON.stringify(data))
 }
