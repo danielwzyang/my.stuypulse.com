@@ -13,7 +13,7 @@ export const POST: APIRoute = async ({ request }) => {
 
         // read the checkin file
         const checkinsFile = formData.get("checkins") as File
-        const checkinsText = await new Blob([checkinsFile], { type: "text/plain" }).text()
+        const checkinsText = await new Blob([checkinsFile], { type: "text/csv" }).text()
 
         // fetch past data from the supabase
         let { data: meetings, error: error1 } = await serviceSupabase
@@ -72,7 +72,7 @@ export const POST: APIRoute = async ({ request }) => {
 
         // read the attendance file
         const attendanceFile = formData.get("attendance") as File
-        const attendanceText = await new Blob([attendanceFile], { type: "text/plain" }).text()
+        const attendanceText = await new Blob([attendanceFile], { type: "text/csv" }).text()
 
         // parse the attendance data
         let attendanceData = attendanceText.trim().split("\n").map((e) => e.split(","))
@@ -91,8 +91,8 @@ export const POST: APIRoute = async ({ request }) => {
 
         if (error3) return new Response("Error upserting attendance data: " + error3.message, { status: 500 })
 
-        return new Response("Successfully posted data.")
+        return new Response("Successfully posted data.", { status: 200 })
     } catch (error) {
-        return new Response("Error posting data: " + error)
+        return new Response("Error posting data: " + error, { status: 500 })
     }
 }
