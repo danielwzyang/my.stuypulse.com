@@ -35,7 +35,7 @@ export const POST: APIRoute = async ({ request }) => {
 
         // updates the user meetings
         checkinsData.forEach((row) => {
-            const date = row[0], id = row[1], checkedOut = row[3] !== ""
+            const date = row[0], id = row[1], checkedOut = row[5] !== ""
 
             // inits the key value pair if the key doesn't exist (ie the id is new)
             if (!(id in meetingsObj))
