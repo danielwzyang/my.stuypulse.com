@@ -15,7 +15,7 @@ export const POST: APIRoute = async ({ request, cookies, redirect }) => {
 
     // checks if the osis exists in the database
     const { data, error } = await supabase
-        .from("total_attendance")
+        .from("attendance")
         .select("id_number")
         .eq("id_number", osis)
     
