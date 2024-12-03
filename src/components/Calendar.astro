@@ -27,7 +27,7 @@ const { checkedOut, onlyCheckedIn, allMeetings } = Astro.props
     let month = date.getMonth()
 
     // saves today's date
-    const today = new Date(year, month, date.getDate()).getTime()
+    const today = new Date(year, month, date.getDate(), 16).getTime()
 
     updateTitle()
     generateDates()
