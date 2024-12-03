@@ -27,7 +27,8 @@ const { checkedOut, onlyCheckedIn, allMeetings } = Astro.props
     let month = date.getMonth()
 
     // saves today's date
-    const today = new Date(year, month, date.getDate(), 16).getTime()
+    const today = new Date(year, month, date.getDate()).getTime()
+    const fourPM = new Date(year, month, date.getDate(), 16).getTime()
 
     updateTitle()
     generateDates()
@@ -108,7 +109,7 @@ const { checkedOut, onlyCheckedIn, allMeetings } = Astro.props
                 // checks if the meeting is in the future or in the past
 
                 // meeting is in the past
-                if (curDate < today) {
+                if (curDate < fourPM) {
                     // checks if the person went to the meeting or not and colors appropriately
 
                     // went to meeting but didn't check out
