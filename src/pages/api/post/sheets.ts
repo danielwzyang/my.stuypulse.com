@@ -6,6 +6,7 @@ export const POST: APIRoute = async ({ request }) => {
     const first_name = formData.get("first_name")
     const last_name = formData.get("last_name")
 
+    console.log("hello vercel is this log working")
     console.log(import.meta.env.SHEETS_ID)
     console.log(import.meta.env.SHEETS_EMAIL)
     console.log(import.meta.env.SHEETS_PRIVATE_KEY)
