@@ -5,6 +5,10 @@ export const POST: APIRoute = async ({ request }) => {
     const formData = await request.formData()
     const first_name = formData.get("first_name")
     const last_name = formData.get("last_name")
+
+    console.log(import.meta.env.SHEETS_ID)
+    console.log(import.meta.env.SHEETS_EMAIL)
+    console.log(import.meta.env.SHEETS_PRIVATE_KEY)
     
     const sheets = await getSheets()
     const spreadsheetId = import.meta.env.SHEETS_ID
