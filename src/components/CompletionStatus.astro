@@ -1,0 +1,20 @@
+---
+interface Props {
+	safety_test: string
+    dues: string
+}
+
+const { safety_test, dues } = Astro.props
+---
+
+<div class="flex flex-wrap space-x-5 mx-5 items-center">
+    <div>
+        <input type="checkbox" checked={safety_test === "TRUE"} onclick="return false" name="safety_test"/>
+        <label for="safety_test">Safety Test</label>
+    </div>
+
+    <div>
+        <input type="checkbox" checked={dues === "TRUE"} onclick="return false" name="dues"/>
+        <label for="dues">Dues</label>
+    </div>
+</div>
