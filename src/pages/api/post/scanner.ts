@@ -4,19 +4,22 @@ import type { APIRoute } from "astro"
 import { serviceSupabase } from "../../../lib/supabase"
 
 export const POST: APIRoute = async ({ request }) => {
+    // attemping to fix csrf error with CORS headers
+    const headers = { "Access-Control-Allow-Origin": "*" }
+
     try {
         const formData = await request.formData()
 
         // make sure the key is correct
         const key = request.headers.get("key")
-        if (!key || key != import.meta.env.KIOSK_KEY) return new Response("Authorization key is incorrect.", { status: 403 })
+        if (!key || key != import.meta.env.KIOSK_KEY) return new Response("Authorization key is incorrect.", { status: 403, headers })
 
         // fetch data from supabase
         let { data: meetings, error } = await serviceSupabase
             .from("attendance")
             .select("id_number, checked_out, only_checked_in")
 
-        if (error || !meetings) return new Response("Error fetching user meetings: " + error?.message, { status: 500 })
+        if (error || !meetings) return new Response("Error fetching user meetings: " + error?.message, { status: 500, headers })
 
         // converts the array of objects into one object
         const meetingsObj = meetings.reduce((obj, { id_number, checked_out, only_checked_in }) => {
@@ -86,10 +89,10 @@ export const POST: APIRoute = async ({ request }) => {
             .from("attendance")
             .upsert(newData)
 
-        if (error2) return new Response("Error upserting attendance data: " + error2.message, { status: 500 })
+        if (error2) return new Response("Error upserting attendance data: " + error2.message, { status: 500, headers })
 
-        return new Response("Successfully posted data.", { status: 200 })
+        return new Response("Successfully posted data.", { status: 200, headers })
     } catch (error) {
-        return new Response("Error posting data: " + error, { status: 500 })
+        return new Response("Error posting data: " + error, { status: 500, headers })
     }
 }
