@@ -1,8 +1,12 @@
 ---
 import Layout from "../components/Layout.astro"
-import AdminForm from "../components/AdminForm.astro"
+import UserSearch from "../components/UserSearch.astro"
 import { supabase } from "../lib/supabase"
-import UserDashboard from "../components/UserDashboard.astro"
+import MeetingsList from "../components/MeetingsList.astro"
+import Calendar from "../components/Calendar.astro"
+import CompletionStatus from "../components/CompletionStatus.astro"
+import Logout from "../components/Logout.astro"
+import UserData from "../components/UserData.astro"
 
 // checks if the user is logged in through the cookies
 // if they aren't logged in then we redirect them to login
@@ -46,22 +50,32 @@ let osis = session.data.user?.email?.split("@")[0]
 
 let allMeetings: string[] = []
 let userData
+let meetings = []
 
 // if the user is the admin use search params for osis
 osis = Astro.url.searchParams.get("osis") || osis
 
-if (osis && osis !== "admin") {
-    // gets the user row from the database
-    const { data, error } = await supabase
-        .from("attendance")
-        .select("*")
-        .in("id_number", [osis, "all"])
-        .order("id_number", { ascending: true })
+if (osis) {
+    if (osis !== "admin") {
+        // gets the user row from the database
+        const { data, error } = await supabase
+            .from("attendance")
+            .select("*")
+            .in("id_number", [osis, "all"])
+            .order("id_number", { ascending: true })
 
-    if (error) console.error("error fetching data")
-    else { 
-        userData = data[0]
-        allMeetings = data[1].checked_out
+        if (error) console.error("error fetching user data")
+        else { 
+            userData = data[0]
+            allMeetings = data[1].checked_out
+        }
+    } else {
+        const { data, error } = await supabase
+            .from("meetings")
+            .select("*")
+        
+        if (error) console.error("error fetching meetings data")
+        else meetings = data
     }
 }
 ---
@@ -69,9 +83,53 @@ if (osis && osis !== "admin") {
 <Layout title="Dashboard | MyPulse" desc="Track attendance and see upcoming events for StuyPulse">
     <div class="flex flex-col items-center justify-center min-h-[80vh]">
         {
-            osis === "admin" ? 
-                <AdminForm /> 
-            :   <UserDashboard osis={osis} checkedOut={userData.checked_out} onlyCheckedIn={userData.only_checked_in} allMeetings={allMeetings} userData={userData} />
+            osis === "admin" ? <>
+                <MeetingsList meetings={meetings}/>
+                <form action="?osis=" id="form" class="flex flex-col gap-2 w-[200px]">
+                    <h1 class="text-center text-xl">Student Search</h1>
+                    <input
+                        class="text-center border-2 p-2 rounded-xl"
+                        placeholder="OSIS:"
+                        name="osis"
+                        id="osis"
+                    />
+                    <button class="text-center border-2 p-2 rounded-xl" type="submit">
+                        Search
+                    </button>
+
+                    <button formaction="/api/auth/logout" class="text-center border-2 rounded-xl w-[200px] p-2" type="submit">
+                        Log out
+                    </button>
+                </form>
+            </>
+            : <>
+            <h1 class="mb-2 text-4xl text-center">
+                {userData.first_name ? `${userData.first_name} ${userData.last_name}` : osis}
+            </h1>
+
+            <div class="flex flex-col w-full items-center mb-5 space-y-5">
+                <div class="flex flex-wrap gap-5 justify-center mx-3">
+                    <div class="flex flex-wrap w-[85vw] justify-center gap-4">
+                        <div class="flex gap-2 items-center">
+                            <div class="w-4 h-4 bg-[#77dd77]"></div>
+                            <h1>Present</h1>
+                        </div>
+                        <div class="flex gap-2 items-center">
+                            <div class="w-4 h-4 bg-[#e36873]"></div>
+                            <h1>Absent</h1>
+                        </div>
+                        <div class="flex gap-2 items-center">
+                            <div class="w-4 h-4 bg-[#ffbb73]"></div>
+                            <h1>Didn't Checkout</h1>
+                        </div>
+                    </div>
+                    <Calendar checkedOut={userData.checked_out} onlyCheckedIn={userData.only_checked_in} allMeetings={allMeetings} />
+                    <UserData userData={userData} />
+                </div>
+                <CompletionStatus safety_test={userData.safety_test} dues={userData.dues} />
+                <Logout />
+            </div>
+            </>
         }
     </div>
 </Layout>
