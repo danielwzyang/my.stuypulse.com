@@ -8,13 +8,13 @@ const { safety_test, dues } = Astro.props
 ---
 
 <div class="flex flex-wrap space-x-5 mx-5 items-center">
-    <div>
-        <input type="checkbox" checked={safety_test} onclick="return false" name="safety_test"/>
+    <div class="flex items-center space-x-1">
+        <input type="checkbox" checked={safety_test} onclick="return false" name="safety_test" class="accent-[black]"/>
         <label for="safety_test">Safety Test</label>
     </div>
 
-    <div>
-        <input type="checkbox" checked={dues} onclick="return false" name="dues"/>
+    <div class="flex items-center space-x-1">
+        <input type="checkbox" checked={dues} onclick="return false" name="dues" class="accent-[black]"/>
         <label for="dues">Dues</label>
     </div>
 </div>
