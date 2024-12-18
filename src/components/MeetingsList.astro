@@ -1,12 +1,8 @@
 ---
+import type { Meeting } from "../pages/dashboard.astro"
+
 interface Props {
-    meetings: {
-        date: string
-        attendees: string[]
-        num_checkins: number
-        num_checkouts: number
-        checkout_rate_percent: string
-    }[]
+    meetings: Meeting[]
 }
 
 const { meetings } = Astro.props

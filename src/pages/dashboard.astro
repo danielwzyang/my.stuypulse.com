@@ -6,9 +6,10 @@ import Calendar from "../components/Calendar.astro"
 import CompletionStatus from "../components/CompletionStatus.astro"
 import UserData from "../components/UserData.astro"
 import StudentsList from "../components/StudentsList.astro"
+import { addIssueToContext } from "astro:schema"
 
 // checks if the user is logged in through the cookies
-// if they aren't logged in then we redirect them to login
+// if they aren"t logged in then we redirect them to login
 const accessToken = Astro.cookies.get("sb-access-token")
 const refreshToken = Astro.cookies.get("sb-refresh-token")
 if (!accessToken || !refreshToken) return Astro.redirect("/")
@@ -22,7 +23,7 @@ try {
         access_token: accessToken.value,
     })
 
-    // if there's an error then the tokens are deleted and user is redirected to login
+    // if there"s an error then the tokens are deleted and user is redirected to login
     if (session.error) {
         Astro.cookies.delete("sb-access-token", {
             path: "/",
@@ -47,22 +48,23 @@ try {
 // the osis is stored as email in the supabase database
 let osis = session.data.user?.email?.split("@")[0]
 
-let allMeetings: string[] = []
-let userData
-let meetings = []
-
-// if the user is the admin use search params for osis
-osis = Astro.url.searchParams.get("osis") || osis
-
-let meeting = Astro.url.searchParams.get("meeting")
-
-interface Meeting { 
+export interface Meeting { 
     date: string
     attendees: { id: string, total_hours: string, checkin_time: string, checkout_time: string }[]
     num_checkins: string
     num_checkouts: string
     checkout_rate_percent: string 
 }
+
+
+let allMeetings: string[] = []
+let userData
+let meetings: Meeting[] = []
+
+// if the user is the admin use search params for osis
+osis = Astro.url.searchParams.get("osis") || osis
+
+let meeting = Astro.url.searchParams.get("meeting")
 
 let meetingInfo: Meeting | null = null
 let names: Record<string, string> = {}
@@ -146,7 +148,7 @@ if (osis) {
                                 Log out
                             </button>
                         </form>
-                        <MeetingsList meetings={meetings}/>
+                        <MeetingsList meetings={meetings.sort(((a, b) => { return b.date.localeCompare(a.date) }))}/>
                     </>
                 }
             </>
@@ -171,7 +173,7 @@ if (osis) {
                             </div>
                             <div class="flex gap-2 items-center">
                                 <div class="w-4 h-4 bg-[#ffbb73]"></div>
-                                <h1>Didn't Checkout</h1>
+                                <h1>Didn"t Checkout</h1>
                             </div>
                         </div>
                         <Calendar checkedOut={userData.checked_out} onlyCheckedIn={userData.only_checked_in} allMeetings={allMeetings} />
