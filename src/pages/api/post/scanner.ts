@@ -30,10 +30,16 @@ export const POST: APIRoute = async ({ request }) => {
             return obj
         }, {} as Record<string, { checked_out: Set<string>, only_checked_in: Set<string> }>)
 
+        interface Attendee { 
+            checkin_time: string, 
+            checkout_time: string, 
+            total_hours: string
+        }
+
         const meetingsObj = meetings.reduce((obj, { date, attendees, num_checkins, num_checkouts, checkout_rate_percent }) => {
             obj[date] = { attendees: new Set(attendees || []), num_checkins, num_checkouts, checkout_rate_percent }
             return obj
-        }, {} as Record<string, { attendees: Set<string>, num_checkins: number, num_checkouts: number, checkout_rate_percent: string }>)
+        }, {} as Record<string, { attendees: Record<string, Attendee>, num_checkins: number, num_checkouts: number, checkout_rate_percent: string }>)
 
         // read the meetings file
         const meetingsFile = formData.get("meetings") as File
@@ -49,7 +55,7 @@ export const POST: APIRoute = async ({ request }) => {
             const [date, num_checkins, num_checkouts, checkout_rate_percent] = row
             // adds the key value pair if the key doesn't exist (ie the date is new)
             if (!(date in meetingsObj))
-                meetingsObj[new Date(date).toISOString().split("T")[0]] = { attendees: new Set(), num_checkins, num_checkouts, checkout_rate_percent }
+                meetingsObj[new Date(date).toISOString().split("T")[0]] = { attendees: {}, num_checkins, num_checkouts, checkout_rate_percent }
 
             // adds the meeting to the list of all the meetings
             attendanceObj["all"].checked_out.add(date)
@@ -80,7 +86,7 @@ export const POST: APIRoute = async ({ request }) => {
 
             // adds student to attendees of meeting
             if (!(id in meetingsObj[date].attendees))
-                meetingsObj[date].attendees.add({ id, checkin_time, checkout_time, total_hours })
+                meetingsObj[date].attendees[id] = { checkin_time, checkout_time, total_hours }
         })
 
         // read the attendance file
@@ -126,7 +132,12 @@ export const POST: APIRoute = async ({ request }) => {
         const newMeetingsData = []
         for (const date in meetingsObj) {
             const { attendees, num_checkins, num_checkouts, checkout_rate_percent } = meetingsObj[date]
-            newMeetingsData.push({ date, attendees: Array.from(attendees), num_checkins, num_checkouts, checkout_rate_percent })
+            const attendeesArr = []
+            for (const id in attendees) {
+                const { checkin_time, checkout_time, total_hours } = attendees[id]
+                attendeesArr.push({ id, checkin_time, checkout_time, total_hours })
+            }
+            newMeetingsData.push({ date, attendees: attendeesArr.sort((a, b) => a.checkin_time.localeCompare(b.checkin_time)), num_checkins, num_checkouts, checkout_rate_percent })
         }
 
         // upsert the meetings data
