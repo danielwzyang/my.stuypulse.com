@@ -1,0 +1,39 @@
+---
+interface Props {
+    meetingInfo: {
+        date: string
+        attendees: { id: string, total_hours: string, checkin_time: string, checkout_time: string }[]
+        num_checkins: string
+        num_checkouts: string
+        checkout_rate_percent: string 
+    }
+    names: Record<string, string>
+}
+
+const { meetingInfo, names } = Astro.props
+---
+
+<div class="w-[350px] h-[500px] overflow-auto rounded-xl border-2 my-2">
+    <div class="flex px-4 my-2">
+        <h1 class="text-sm w-[120px] text-center">Name</h1>
+        <h1 class="text-sm w-[60px] text-center">Hours</h1>
+        <h1 class="text-sm w-[60px] text-center">In</h1>
+        <h1 class="text-sm w-[60px] text-center">Out</h1>
+    </div>
+    <hr class="w-full"/>
+    {   
+        meetingInfo.attendees.map(({ id, total_hours, checkin_time, checkout_time }) => {
+            return (
+                <a href={`${Astro.url.origin}/dashboard?osis=${id}`}>
+                    <div class="flex px-4 my-2 text-[#424242] items-center hover:underline">
+                        <h1 class="text-sm w-[120px] text-center">{names[id] || id}</h1>
+                        <h1 class="text-sm w-[60px] text-center">{total_hours === "0.00" ? "-" : total_hours}</h1>
+                        <h1 class="text-sm w-[60px] text-center">{checkin_time.substring(11, 16)}</h1>
+                        <h1 class="text-sm w-[60px] text-center">{checkout_time.substring(11, 16) || "-"}</h1>
+                    </div>
+                </a>
+                <hr class="w-full"/>
+            )
+        })
+    }
+</div>

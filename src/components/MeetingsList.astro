@@ -3,6 +3,38 @@ interface Props {
     meetings: {
         date: string
         attendees: string[]
+        num_checkins: number
+        num_checkouts: number
+        checkout_rate_percent: string
     }[]
 }
+
+const { meetings } = Astro.props
 ---
+
+<h1 class="text-xl mt-10">Meetings</h1>
+<div class="w-[350px] h-[500px] overflow-auto rounded-xl border-2 my-2">
+    <div class="flex my-2">
+        <h1 class="text-sm w-[120px] text-center">Date</h1>
+        <h1 class="text-sm w-[60px] text-center">In</h1>
+        <h1 class="text-sm w-[60px] text-center">Out</h1>
+        <h1 class="text-sm w-[85px] text-center">Out %</h1>
+    </div>
+    <hr class="w-full"/>
+
+    {   
+        meetings.map(({ date, num_checkins, num_checkouts, checkout_rate_percent }) => {
+            return (
+                <a href={`${Astro.url.origin}/dashboard?meeting=${date}`}>
+                    <div class="flex my-2 text-[#424242] hover:underline">
+                        <h1 class="text-sm w-[120px] text-center">{date}</h1>
+                        <h1 class="text-sm w-[60px] text-center">{num_checkins}</h1>
+                        <h1 class="text-sm w-[60px] text-center">{num_checkouts}</h1>
+                        <h1 class="text-sm w-[85px] text-center">{checkout_rate_percent}</h1>
+                    </div>
+                </a>
+                <hr class="w-full"/>
+            )
+        })
+    }
+</div>
