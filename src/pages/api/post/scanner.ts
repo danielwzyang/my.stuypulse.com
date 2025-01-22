@@ -48,8 +48,9 @@ export const POST: APIRoute = async ({ request }) => {
         // parse the meetings data
         const meetingsText = await new Blob([meetingsFile], { type: "text/csv" }).text()
         let meetingsData = meetingsText.trim().split("\n").map((e) => e.split(","))
+        console.log(meetingsData)
         meetingsData.shift() // gets rid of the headers row
-
+        
         // updates the meetings
         meetingsData.forEach((row) => {
             const [date, num_checkins, num_checkouts, checkout_rate_percent] = row
@@ -68,6 +69,7 @@ export const POST: APIRoute = async ({ request }) => {
         // parse the checkin data
         const checkinsText = await new Blob([checkinsFile], { type: "text/csv" }).text()
         let checkinsData = checkinsText.trim().split("\n").map((e) => e.split(","))
+        console.log(checkinsData)
         checkinsData.shift() // gets rid of the headers row
 
         // updates the user attendance
@@ -96,6 +98,7 @@ export const POST: APIRoute = async ({ request }) => {
         // parse the attendance data
         const attendanceText = await new Blob([attendanceFile], { type: "text/csv" }).text()
         let attendanceData = attendanceText.trim().split("\n").map((e) => e.split(","))
+        console.log(attendanceData)
         attendanceData.shift() // gets rid of the headers row
 
         // convert the attendance data into an array of objects
