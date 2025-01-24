@@ -131,23 +131,25 @@ if (osis) {
 
                     // if no meeting then just display the admin dashboard with student search and meetings list
                     <>
-                        <h1 class="text-center text-xl my-2">Student Search</h1>
-                        <form action="?osis=" id="form" class="flex flex-col gap-2 w-[200px] text-sm">
+                        <h1 class="text-center text-xl mb-2">Student Search</h1>
+                        <form id="form" class="flex flex-col gap-2 w-[200px] text-sm">
                             <input
                                 class="text-center border-2 p-2 rounded-xl"
-                                placeholder="OSIS:"
-                                name="osis"
-                                id="osis"
+                                placeholder="Name:"
+                                name="name"
                             />
                             <button class="text-center border-2 p-2 rounded-xl" type="submit">
                                 Search
                             </button>
 
-                            <button formaction="/api/auth/logout" class="text-center border-2 rounded-xl w-[200px] p-2" type="submit">
+                            <h1 id="error" class="text-sm text-[#eb3446] text-center"></h1>
+                        </form>
+                        <MeetingsList meetings={meetings.sort(((a, b) => { return b.date.localeCompare(a.date) }))}/>
+                        <form>
+                            <button formaction="/api/auth/logout" class="text-center border-2 rounded-xl w-[200px] p-2 mt-5">
                                 Log out
                             </button>
                         </form>
-                        <MeetingsList meetings={meetings.sort(((a, b) => { return b.date.localeCompare(a.date) }))}/>
                     </>
                 }
             </>
@@ -172,7 +174,7 @@ if (osis) {
                             </div>
                             <div class="flex gap-2 items-center">
                                 <div class="w-4 h-4 bg-[#ffbb73]"></div>
-                                <h1>Didn"t Checkout</h1>
+                                <h1>Didn't Checkout</h1>
                             </div>
                         </div>
                         <Calendar checkedOut={userData.checked_out} onlyCheckedIn={userData.only_checked_in} allMeetings={allMeetings} />
@@ -188,4 +190,27 @@ if (osis) {
             </>
         }
     </div>
+
+    <script>
+        const searchForm = document.getElementById("form")
+
+        searchForm?.addEventListener("submit", async (event) => {
+            event.preventDefault()
+
+            const data = new FormData(searchForm as HTMLFormElement)
+
+            const response = await fetch("/api/post/search", {
+                method: "POST",
+                body: data,
+            })
+
+            
+            const text = await response.text()
+            if (response.ok) window.location.href = text
+            else {
+                const error = document.getElementById("error")
+                error!.textContent = text
+            }
+        })
+    </script>
 </Layout>

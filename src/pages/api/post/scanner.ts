@@ -30,10 +30,16 @@ export const POST: APIRoute = async ({ request }) => {
             return obj
         }, {} as Record<string, { checked_out: Set<string>, only_checked_in: Set<string> }>)
 
+        interface Attendee { 
+            checkin_time: string, 
+            checkout_time: string, 
+            total_hours: string
+        }
+
         const meetingsObj = meetings.reduce((obj, { date, attendees, num_checkins, num_checkouts, checkout_rate_percent }) => {
             obj[date] = { attendees: new Set(attendees || []), num_checkins, num_checkouts, checkout_rate_percent }
             return obj
-        }, {} as Record<string, { attendees: Set<string>, num_checkins: number, num_checkouts: number, checkout_rate_percent: string }>)
+        }, {} as Record<string, { attendees: Record<string, Attendee>, num_checkins: number, num_checkouts: number, checkout_rate_percent: string }>)
 
         // read the meetings file
         const meetingsFile = formData.get("meetings") as File
@@ -42,8 +48,9 @@ export const POST: APIRoute = async ({ request }) => {
         // parse the meetings data
         const meetingsText = await new Blob([meetingsFile], { type: "text/csv" }).text()
         let meetingsData = meetingsText.trim().split("\n").map((e) => e.split(","))
+        console.log(meetingsData)
         meetingsData.shift() // gets rid of the headers row
-
+        
         // updates the meetings
         meetingsData.forEach((row) => {
             const [date, num_checkins, num_checkouts, checkout_rate_percent] = row
@@ -60,6 +67,7 @@ export const POST: APIRoute = async ({ request }) => {
         // parse the checkin data
         const checkinsText = await new Blob([checkinsFile], { type: "text/csv" }).text()
         let checkinsData = checkinsText.trim().split("\n").map((e) => e.split(","))
+        console.log(checkinsData)
         checkinsData.shift() // gets rid of the headers row
 
         // updates the user attendance
@@ -78,7 +86,7 @@ export const POST: APIRoute = async ({ request }) => {
 
             // adds student to attendees of meeting
             if (!(id in meetingsObj[date].attendees))
-                meetingsObj[date].attendees.add({ id, checkin_time, checkout_time, total_hours })
+                meetingsObj[date].attendees[id] = { checkin_time, checkout_time, total_hours }
         })
 
         // read the attendance file
@@ -88,6 +96,7 @@ export const POST: APIRoute = async ({ request }) => {
         // parse the attendance data
         const attendanceText = await new Blob([attendanceFile], { type: "text/csv" }).text()
         let attendanceData = attendanceText.trim().split("\n").map((e) => e.split(","))
+        console.log(attendanceData)
         attendanceData.shift() // gets rid of the headers row
 
         // convert the attendance data into an array of objects
@@ -124,7 +133,12 @@ export const POST: APIRoute = async ({ request }) => {
         const newMeetingsData = []
         for (const date in meetingsObj) {
             const { attendees, num_checkins, num_checkouts, checkout_rate_percent } = meetingsObj[date]
-            newMeetingsData.push({ date, attendees: Array.from(attendees), num_checkins, num_checkouts, checkout_rate_percent })
+            const attendeesArr = []
+            for (const id in attendees) {
+                const { checkin_time, checkout_time, total_hours } = attendees[id]
+                attendeesArr.push({ id, checkin_time, checkout_time, total_hours })
+            }
+            newMeetingsData.push({ date, attendees: attendeesArr.sort((a, b) => a.checkin_time.localeCompare(b.checkin_time)), num_checkins, num_checkouts, checkout_rate_percent })
         }
 
         // upsert the meetings data
