@@ -49,7 +49,7 @@ const { checkedOut, onlyCheckedIn, allMeetings } = Astro.props
     function moveMonth(change) {
         // moves the month and changes the dates
         month += change
-        date = new Date(year, month, new Date().getDate())
+        date = new Date(year, month)
         year = date.getFullYear()
         month = date.getMonth()
 
@@ -137,5 +137,5 @@ const { checkedOut, onlyCheckedIn, allMeetings } = Astro.props
             dayElement.className = dayStyle + " text-[#9e9e9e]"
             dates?.appendChild(dayElement)
         }
-    }
+    }   
 </script>
