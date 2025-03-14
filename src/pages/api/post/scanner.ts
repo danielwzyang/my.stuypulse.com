@@ -52,8 +52,11 @@ export const POST: APIRoute = async ({ request }) => {
         
         // updates the meetings
         meetingsData.forEach((row) => {
+            const [date, num_checkins, num_checkouts, checkout_rate_percent] = row
+            meetingsObj[new Date(date).toISOString().split("T")[0]] = { attendees: new Set(), num_checkins, num_checkouts, checkout_rate_percent }
+
             // adds the meeting to the list of all the meetings
-            attendanceObj["all"].checked_out.add(row[0])
+            attendanceObj["all"].checked_out.add(date)
         })
 
         // read the checkin file
