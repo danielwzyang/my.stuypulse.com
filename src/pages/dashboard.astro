@@ -180,7 +180,6 @@ if (osis) {
                         <Calendar checkedOut={userData.checked_out} onlyCheckedIn={userData.only_checked_in} allMeetings={allMeetings} />
                         <UserData userData={userData} />
                     </div>
-                    <CompletionStatus safety_test={userData.safety_test} dues={userData.dues} />
                     <form action="/api/auth/logout" class="mx-auto w-fit">
                         <button class="text-center border-2 rounded-xl w-[200px] p-2" type="submit">
                             Log out
