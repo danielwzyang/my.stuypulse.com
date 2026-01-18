@@ -145,7 +145,6 @@ if (osis) {
                             <h1 id="error" class="text-sm text-[#eb3446] text-center"></h1>
                         </form>
                         <MeetingsList meetings={meetings.sort(((a, b) => { return b.date.localeCompare(a.date) }))}/>
-                        <CompletionStatus safety_test={userData.safety_test} dues={userData.dues} />
                         <form>
                             <button formaction="/api/auth/logout" class="text-center border-2 rounded-xl w-[200px] p-2 mt-5">
                                 Log out
@@ -181,6 +180,7 @@ if (osis) {
                         <Calendar checkedOut={userData.checked_out} onlyCheckedIn={userData.only_checked_in} allMeetings={allMeetings} />
                         <UserData userData={userData} />
                     </div>
+                    <CompletionStatus safety_test={userData.safety_test} dues={userData.dues} />
                     <form action="/api/auth/logout" class="mx-auto w-fit">
                         <button class="text-center border-2 rounded-xl w-[200px] p-2" type="submit">
                             Log out
